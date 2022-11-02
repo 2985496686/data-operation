@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"gorm.io/gorm/logger"
 )
 
@@ -41,11 +42,18 @@ func main() {
 		fmt.Println(err.Error())
 	}
 
-	//批量插入
+	//批量插入 方法一
 	//studs := []model.Student{{UserName: "张三", ClassNo: 2, Score: 87},
 	//	{UserName: "李四", ClassNo: 1, Score: 67},
 	//	{UserName: "王五", ClassNo: 3, Score: 97}}
 	//InsertUsers(db, &studs)
+
+	//批量插入 方法二 通过map批量插入
+	//db.Model(&model.Student{}).Create([]map[string]interface{}{
+	//	{"UserName": "李四", "ClassNo": 1, "Score": 67},
+	//	{"UserName": "王硕", "ClassNo": 2, "Score": 97},
+	//	{"UserName": "宇腾", "ClassNo": 3, "Score": 87},
+	//})
 
 	//save操作必须指定主键，用于修改指定主键的用户信息，若主键不存在，则会进行插入
 	//db.Save(stu)
@@ -53,10 +61,7 @@ func main() {
 	//跳过钩子方法执行插入
 	db.Session(&gorm.Session{SkipHooks: true}).Create(&stu)
 
-	db.Model(&model.Student{}).Create([]map[string]interface{}{
-		{"UserName": "李四", "ClassNo": 1, "Score": 67},
-		{"UserName": "王硕", "ClassNo": 2, "Score": 97},
-		{"UserName": "宇腾", "ClassNo": 3, "Score": 87},
+	db.Clauses(clause.OnConflict{
+		Columns: []clause.Column{{Name: "id"}},
 	})
-
 }
