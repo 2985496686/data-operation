@@ -18,9 +18,10 @@ type Student struct {
 	UserName string `gorm:"column:username"`
 	ClassNo  int    `gorm:"column:classno"`
 	Score    int    `gorm:"column:score"`
+	Class    Class  `gorm:"references:ClassId;foreignKey:ClassNo"` //foreignKey:该结构体中的外键  references：外联实体的主键或唯一键
 }
 
-func (u Student) TableName() string {
+func (stu Student) TableName() string {
 	return "u_stu"
 }
 

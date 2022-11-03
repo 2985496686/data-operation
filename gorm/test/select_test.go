@@ -76,4 +76,20 @@ func TestSelect(t *testing.T) {
 	var users7 model.Student
 	db.Distinct("username", "classno").Find(&users7)
 	fmt.Println(users7)
+
+	//高级查询
+	//FirstOrInit  获取升序排列的第一条记录，若获取失败，通过筛选条件初始化结构体
+	var stu4 model.Student
+	db.Attrs("classno", 1). //当获取失败时，Attrs会进行属性赋值
+				Assign("score", 100). //无论获取成功还是失败，Assign都会进行属性赋值
+				FirstOrInit(&stu4, map[string]interface{}{"username": "Joke"})
+	fmt.Println(stu4)
+
+	//FirstOrCreate 获取升序排序的第一条记录，若获取失败，则创建记录
+	// Attrs和Assign的用法和FirstOrInit中类似
+	var stu5 model.Student
+	db.Attrs("classno", 1).
+		Assign("score", 100).
+		FirstOrCreate(&stu5, map[string]interface{}{"username": "Joke"})
+
 }
